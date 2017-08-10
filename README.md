@@ -1,4 +1,4 @@
-# Pixelmon <3 Command Blocks / PixelmonCBUtil
+# Pixelmon <3 Command Blocks / Pixelmon Commandblock Utilities
 Add scoreboard objectives for Pixelmon-related variables.
 
 The scores are continously updated (10 players at a time every 500 ms) and are meant to be accessed from command blocks, e.g. to open an iron door if a player has 8 badges or more.
