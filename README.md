@@ -12,4 +12,7 @@ Objective names:
 - minLvl: The lowest level of the pokemon in a players team.
 - maxLvl: The highest level of teh pokemon in a players team.
 
+How-to:
+- Use like any other score with commands block. E.g. '/tellraw @p[score_minLvl_min=10] ["Hello World"]' to send the message "Hello World" to the nearest player with a team in which the lowest level is greater or equal to 10.
+
 ![Screenshot](http://i.imgur.com/09mS8gG.png)
