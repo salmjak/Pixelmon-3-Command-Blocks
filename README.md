@@ -10,7 +10,7 @@ Objective names (case sensitive):
 - isFainted: Checks if all the pokemon in a players team are fainted (0 = false, 1 = true).
 - avgLvl: The average level of a players team (sum of levels / 6, even if there is just one pokemon in the team).
 - minLvl: The lowest level of the pokemon in a players team.
-- maxLvl: The highest level of teh pokemon in a players team.
+- maxLvl: The highest level of the pokemon in a players team.
 
 How-to:
 - Use like any other score with commands block. E.g. '/tellraw @p[score_minLvl_min=10] ["Hello World"]' to send the message "Hello World" to the nearest player with a team in which the lowest level is greater or equal to 10.
