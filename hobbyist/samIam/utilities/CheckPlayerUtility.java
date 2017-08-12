@@ -4,6 +4,8 @@ package hobbyist.samIam.utilities;
 import com.pixelmonmod.pixelmon.storage.NbtKeys;
 import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
 import com.pixelmonmod.pixelmon.storage.PlayerStorage;
+import com.pixelmonmod.pixelmon.database.DatabaseMoves;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -12,6 +14,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.api.text.Text;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import com.pixelmonmod.pixelmon.PixelmonMethods;
+import com.pixelmonmod.pixelmon.entities.pixelmon.stats.Moveset;
+import static com.pixelmonmod.pixelmon.storage.PixelmonStorage.pokeBallManager;
+import hobbyist.samIam.PixelmonCBUtil.PixelmonCBUtil;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class CheckPlayerUtility {
     
@@ -101,11 +108,10 @@ public class CheckPlayerUtility {
     public static int getPlayerPokeDollarOrZero(EntityPlayerMP p)
     {
         int money = 0;
-        Optional<?> storage = PixelmonStorage.pokeBallManager.getPlayerStorage(p);
+        Optional<PlayerStorage> storage = PixelmonStorage.pokeBallManager.getPlayerStorage(p);
         if (storage.isPresent())
         {
-            PlayerStorage storageCompleted = (PlayerStorage) storage.get();
-            money = storageCompleted.getCurrency();
+            money = storage.get().getCurrency();
         }
         
         return money;
@@ -114,7 +120,6 @@ public class CheckPlayerUtility {
     /** Returns the amount of unique badges in a players inventory*/
     public static int getPlayerNumBadges(EntityPlayerMP p){
         int badges = 0;
-
         for(String id : badge_ids)
         {
             if(badge_stack.containsKey(id))
@@ -141,7 +146,7 @@ public class CheckPlayerUtility {
     
     /** Returns the players team excluding eggs*/
     public static ArrayList<NBTTagCompound> getPlayerTeamOrNull(EntityPlayerMP p){
-        Optional<?> storage = PixelmonStorage.pokeBallManager.getPlayerStorage(p);
+        Optional<?> storage = pokeBallManager.getPlayerStorage(p);
         if (!storage.isPresent())
         {
             return null;

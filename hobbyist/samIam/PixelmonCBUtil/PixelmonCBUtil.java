@@ -12,15 +12,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 import net.minecraft.scoreboard.*;
-import java.util.Random;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 //TODO: Increase performance by listening to Pixelmon Events and only change scores when necessary.
 
@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 (
         id = "pixelmoncbutil",
         name = "PixelmonCommandBlockUtilities",
-        version = "0.0.1",
+        version = "0.0.2",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Adds scoreboards for different Pixelmon variables.",
         authors = "samIam"
@@ -49,9 +49,11 @@ public class PixelmonCBUtil {
     SpongeExecutorService scheduler;
     
     Scoreboard sb;
+    public WorldServer world;
     
     @Listener
-    public void onInitialization(GameInitializationEvent event){
+    public void onInitialization(GameInitializationEvent event)
+    {
         instance = this;
     }
     
@@ -59,9 +61,9 @@ public class PixelmonCBUtil {
     public void onServerStart(GameStartedServerEvent event) 
     {
         scheduler = Sponge.getScheduler().createSyncExecutor(this);
-        scheduler.scheduleAtFixedRate(new ScoreboardUpdater(), 500, 500, TimeUnit.SECONDS);
-        
-        sb = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().worldServerForDimension(0).getScoreboard();
+        scheduler.scheduleAtFixedRate(new ScoreboardUpdater(), 500, 500, TimeUnit.MILLISECONDS);
+        world = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().worldServerForDimension(0);
+        sb = world.getScoreboard();
         if(sb != null)
         {
             createObjectives();
@@ -74,7 +76,7 @@ public class PixelmonCBUtil {
     }
     
     @Listener
-    public void onServerStopped(GameStoppedServerEvent event)
+    public void onServerStopped(GameStoppingServerEvent event)
     {
         scheduler.shutdown();
     }
@@ -90,7 +92,6 @@ public class PixelmonCBUtil {
         }
     }
     
-    Random rand = new Random();
     class ScoreboardUpdater implements Runnable{
 
         int k=0;
