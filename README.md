@@ -1,4 +1,5 @@
 # Pixelmon <3 Command Blocks / Pixelmon Commandblock Utilities
+#Pixelmon 5.1.2 Minecraft 1.10.2 Sponge API 5.1.0
 Add scoreboard objectives for Pixelmon-related variables.
 
 The scores are continously updated (10 players at a time every 500 ms (i.e. it would take 5000 ms (or 5 seconds) to update all of 100 players) and are meant to be accessed from command blocks, e.g. to open an iron door if a player has 8 badges or more.
