@@ -1,5 +1,5 @@
 # Pixelmon <3 Command Blocks / Pixelmon Commandblock Utilities
-#Pixelmon 5.1.2 Minecraft 1.10.2 Sponge API 5.1.0
+#Pixelmon 8.0.2 Minecraft 1.12.2 Sponge API 7.2.0
 
 Add scoreboard objectives for Pixelmon-related variables.
 
@@ -14,6 +14,8 @@ Objective names (case sensitive):
 - avgLvl: The average level of a players team (sum of levels / 6, even if there is just one pokemon in the team).
 - minLvl: The lowest level of the pokemon in a players team.
 - maxLvl: The highest level of the pokemon in a players team.
+- hasEgg: Checks if the player has an egg in its party (0 = false, 1 = true).
+- knows[HM]: Checks if the player has a pokemon that knows HM Fly/Cut/Strength/Surf/Rock Smash (0 = false, 1 = true).
 
 How-to:
 - Use like any other score with commands block. E.g. '/tellraw @p[score_minLvl_min=10] ["Hello World"]' to send the message "Hello World" to the nearest player with a team in which the lowest level is greater or equal to 10.
