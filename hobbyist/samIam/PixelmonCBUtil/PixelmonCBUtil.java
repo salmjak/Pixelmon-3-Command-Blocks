@@ -28,7 +28,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 (
         id = "pixelmoncbu",
         name = "PixelmonCommandBlockUtilities",
-        version = "0.0.3",
+        version = "0.0.4",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Adds scoreboards for different Pixelmon variables.",
         authors = "samIam"
@@ -136,6 +136,8 @@ public class PixelmonCBUtil {
         CreateObjective("knowsRockSmash", "Knows Rock Smash");
         CreateObjective("knowsCut", "Knows Cut");
         CreateObjective("knowsStrength", "Knows Strength");
+        CreateObjective("caughtCount", "Number of pokemon caught");
+        CreateObjective("seenCount", "Number of pokemon seen");
     }
     
     void CreateObjective(String name, String displayName)
@@ -194,6 +196,12 @@ public class PixelmonCBUtil {
                     break;
                 case "knowsStrength":
                     e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp, "Strength"));
+                    break;
+                case "caughtCount":
+                    e.getValue().setScorePoints(CheckPlayerUtility.DexEntriesCaught(mp));
+                    break;
+                case "seenCount":
+                    e.getValue().setScorePoints(CheckPlayerUtility.DexEntriesSeen(mp));
                     break;
             }
         }

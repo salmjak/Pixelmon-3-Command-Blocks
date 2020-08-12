@@ -137,6 +137,18 @@ public class CheckPlayerUtility {
         return pokemon_party;
     }
 
+    public static int DexEntriesCaught(EntityPlayerMP p)
+    {
+        PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueID());
+        return storage.pokedex.countCaught();
+    }
+
+    public static int DexEntriesSeen(EntityPlayerMP p)
+    {
+        PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueID());
+        return storage.pokedex.countSeen();
+    }
+
     public static int KnowsMove(EntityPlayerMP p, String move)
     {
         ArrayList<Pokemon> pokes = getPlayerTeam(p);
