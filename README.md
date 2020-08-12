@@ -16,8 +16,8 @@ Objective names (case sensitive):
 - maxLvl: The highest level of the pokemon in a players team.
 - hasEgg: Checks if the player has an egg in its party (0 = false, 1 = true).
 - knows[HM]: Checks if the player has a pokemon that knows HM Fly/Cut/Strength/Surf/Rock Smash (0 = false, 1 = true).
--caughtCount: The number of pokemon in the pokedex the player has caught.
--seenCount: The number of pokemon in the pokedex the player has seen.
+- caughtCount: The number of pokemon in the pokedex the player has caught.
+- seenCount: The number of pokemon in the pokedex the player has seen.
 
 How-to:
 - Use like any other score with commands block. E.g. '/tellraw @p[score_minLvl_min=10] ["Hello World"]' to send the message "Hello World" to the nearest player with a team in which the lowest level is greater or equal to 10.
