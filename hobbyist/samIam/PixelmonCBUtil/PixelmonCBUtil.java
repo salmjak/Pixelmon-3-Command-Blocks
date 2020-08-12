@@ -26,9 +26,9 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 @Plugin
 (
-        id = "pixelmoncbutil",
+        id = "pixelmoncbu",
         name = "PixelmonCommandBlockUtilities",
-        version = "0.0.2",
+        version = "0.0.3",
         dependencies = @Dependency(id = "pixelmon"),
         description = "Adds scoreboards for different Pixelmon variables.",
         authors = "samIam"
@@ -62,7 +62,7 @@ public class PixelmonCBUtil {
     {
         scheduler = Sponge.getScheduler().createSyncExecutor(this);
         scheduler.scheduleAtFixedRate(new ScoreboardUpdater(), 500, 500, TimeUnit.MILLISECONDS);
-        world = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().worldServerForDimension(0);
+        world = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getWorld(0);
         sb = world.getScoreboard();
         if(sb != null)
         {
@@ -130,6 +130,12 @@ public class PixelmonCBUtil {
         CreateObjective("avgLvl", "Average level of Party");
         CreateObjective("isFainted", "Fainted Team");
         CreateObjective("partySize", "Party Size");
+        CreateObjective("hasEgg", "Has Egg");
+        CreateObjective("knowsFly", "Knows Fly");
+        CreateObjective("knowsSurf", "Knows Surf");
+        CreateObjective("knowsRockSmash", "Knows Rock Smash");
+        CreateObjective("knowsCut", "Knows Cut");
+        CreateObjective("knowsStrength", "Knows Strength");
     }
     
     void CreateObjective(String name, String displayName)
@@ -170,6 +176,24 @@ public class PixelmonCBUtil {
                     break;
                 case "partySize":
                     e.getValue().setScorePoints(CheckPlayerUtility.getPlayerTeamSize(mp));
+                    break;
+                case "hasEgg":
+                    e.getValue().setScorePoints(CheckPlayerUtility.getPlayerEgg(mp));
+                    break;
+                case "knowsFly":
+                    e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp, "Fly"));
+                    break;
+                case "knowsSurf":
+                    e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp,"Surf"));
+                    break;
+                case "knowsCut":
+                    e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp,"Cut"));
+                    break;
+                case "knowsRockSmash":
+                    e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp,"Rock Smash"));
+                    break;
+                case "knowsStrength":
+                    e.getValue().setScorePoints(CheckPlayerUtility.KnowsMove(mp, "Strength"));
                     break;
             }
         }

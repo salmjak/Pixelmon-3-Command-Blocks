@@ -1,39 +1,29 @@
 
 package hobbyist.samIam.utilities;
 
-import com.pixelmonmod.pixelmon.storage.NbtKeys;
-import com.pixelmonmod.pixelmon.storage.PixelmonStorage;
-import com.pixelmonmod.pixelmon.storage.PlayerStorage;
-import com.pixelmonmod.pixelmon.database.DatabaseMoves;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.Pixelmon;
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import com.pixelmonmod.pixelmon.entities.pixelmon.stats.Moveset;
+import com.pixelmonmod.pixelmon.storage.PlayerPartyStorage;
+import com.pixelmonmod.pixelmon.api.moveskills.MoveSkill;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import org.spongepowered.api.text.Text;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import com.pixelmonmod.pixelmon.PixelmonMethods;
-import com.pixelmonmod.pixelmon.entities.pixelmon.stats.Moveset;
-import static com.pixelmonmod.pixelmon.storage.PixelmonStorage.pokeBallManager;
-import hobbyist.samIam.PixelmonCBUtil.PixelmonCBUtil;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class CheckPlayerUtility {
     
     public static int playerTeamFainted(EntityPlayerMP p)
     {
-        ArrayList<NBTTagCompound> pokemon_party = getPlayerTeamOrNull(p);
-        if(pokemon_party == null)
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        for(Pokemon poke : pokes)
         {
-            return 0;
-        }
-
-        for(NBTTagCompound poke : pokemon_party)
-        {
-            if(poke.getInteger(NbtKeys.HEALTH) > 0)
+            if (poke.getHealth() > 0)
             {
+                //Atleast one pokemon isn't fainted. No need to continue.
                 return 0;
             }
         }
@@ -45,15 +35,12 @@ public class CheckPlayerUtility {
     public static int getPlayerTeamAvgLvl(EntityPlayerMP p)
     {
         int average_level = 0;
-        ArrayList<NBTTagCompound> party = getPlayerTeamOrNull(p);
-        if(party != null)
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        for(Pokemon poke : pokes)
         {
-            for(NBTTagCompound poke : party)
-            {
-                average_level += poke.getInteger(NbtKeys.LEVEL);
-            }
-            average_level = (int)((double)average_level / 6.0);
+            average_level += poke.getLevel();
         }
+        average_level = (int)((double)average_level / 6.0);
         
         return average_level;
     }
@@ -62,14 +49,12 @@ public class CheckPlayerUtility {
     public static int getPlayerTeamMaxLvl(EntityPlayerMP p)
     {
         int max_level = 0;
-        ArrayList<NBTTagCompound> party = getPlayerTeamOrNull(p);
-        if(party != null){
-            for(NBTTagCompound poke : party)
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        for(Pokemon poke : pokes)
+        {
+            if(max_level <= poke.getLevel())
             {
-                if(max_level <= poke.getInteger(NbtKeys.LEVEL))
-                {
-                    max_level = poke.getInteger(NbtKeys.LEVEL);
-                }
+                max_level = poke.getLevel();
             }
         }
         
@@ -80,14 +65,12 @@ public class CheckPlayerUtility {
     public static int getPlayerTeamMinLvl(EntityPlayerMP p)
     {
         int min_level = Integer.MAX_VALUE;
-        ArrayList<NBTTagCompound> party = getPlayerTeamOrNull(p);
-        if(party != null){
-            for(NBTTagCompound poke : party)
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        for(Pokemon poke : pokes)
+        {
+            if(min_level >= poke.getLevel())
             {
-                if(min_level >= poke.getInteger(NbtKeys.LEVEL))
-                {
-                    min_level = poke.getInteger(NbtKeys.LEVEL);
-                }
+                min_level = poke.getLevel();
             }
         }
         
@@ -96,25 +79,15 @@ public class CheckPlayerUtility {
     
     public static int getPlayerTeamSize(EntityPlayerMP p)
     {
-        ArrayList<NBTTagCompound> party = getPlayerTeamOrNull(p);
-        if(party != null)
-        {
-            return party.size();
-        }
-        return 0;
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        return pokes.size();
     }
     
     
     public static int getPlayerPokeDollarOrZero(EntityPlayerMP p)
     {
-        int money = 0;
-        Optional<PlayerStorage> storage = PixelmonStorage.pokeBallManager.getPlayerStorage(p);
-        if (storage.isPresent())
-        {
-            money = storage.get().getCurrency();
-        }
-        
-        return money;
+        PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueID());
+        return storage.getMoney();
     }
     
     /** Returns the amount of unique badges in a players inventory*/
@@ -145,32 +118,53 @@ public class CheckPlayerUtility {
     }
     
     /** Returns the players team excluding eggs*/
-    public static ArrayList<NBTTagCompound> getPlayerTeamOrNull(EntityPlayerMP p){
-        Optional<?> storage = pokeBallManager.getPlayerStorage(p);
-        if (!storage.isPresent())
+    public static ArrayList<Pokemon> getPlayerTeam(EntityPlayerMP p){
+        PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueID());
+        ArrayList<Pokemon> pokemon_party = new ArrayList(6);
+        for(int i=0; i<6; i++)
         {
-            return null;
-        }
-        else
-        {
-            PlayerStorage storageCompleted = (PlayerStorage) storage.get();
-            ArrayList<NBTTagCompound> pokemon_party = new ArrayList(6);
-            for(int i=0; i<6; i++)
+            Pokemon poke = storage.get(i);
+            if(poke != null)
             {
-                NBTTagCompound nbt = storageCompleted.partyPokemon[i];
-                if(nbt != null)
+                if(!poke.isEgg())
                 {
-                    if(!nbt.getBoolean("isEgg"))
-                    {
-                        //A pokemon exists on that slot and it isn't an egg. Add it to the list.
-                        pokemon_party.add(nbt);
-                    }
+                    //A pokemon exists on that slot and it isn't an egg. Add it to the list.
+                    pokemon_party.add(poke);
                 }
             }
-            
-            return pokemon_party;
         }
-          
+
+        return pokemon_party;
+    }
+
+    public static int KnowsMove(EntityPlayerMP p, String move)
+    {
+        ArrayList<Pokemon> pokes = getPlayerTeam(p);
+        for(Pokemon poke : pokes){
+            Moveset set = poke.getMoveset();
+            if(set.hasAttack(move)){
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    public static int getPlayerEgg(EntityPlayerMP p){
+        PlayerPartyStorage storage = Pixelmon.storageManager.getParty(p.getUniqueID());
+        for(int i=0; i<6; i++)
+        {
+            Pokemon poke = storage.get(i);
+            if(poke != null)
+            {
+                if(poke.isEgg())
+                {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
     }
     
     public static ArrayList<String> badge_ids = new ArrayList<String>() {{
